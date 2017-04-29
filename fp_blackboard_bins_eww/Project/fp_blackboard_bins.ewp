@@ -310,11 +310,14 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>$PROJ_DIR$\..\CMSYS_F4</state>
           <state>$PROJ_DIR$\..\inc</state>
-          <state>$PROJ_DIR$\..\inc\measure</state>
-          <state>$PROJ_DIR$\..\inc\proto</state>
+          <state>$PROJ_DIR$\..\inc\GNSS</state>
+          <state>$PROJ_DIR$\..\inc\IMU</state>
+          <state>$PROJ_DIR$\..\inc\init</state>
+          <state>$PROJ_DIR$\..\inc\math</state>
           <state>$PROJ_DIR$\..\inc\stm32f415_driver</state>
+          <state>$PROJ_DIR$\..\inc\tools</state>
+          <state>$PROJ_DIR$\..\CMSYS_F4</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -729,7 +732,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>D:\work\workspace_EWW\fp_blackboard_bins\Project\stm32f4xx_flash.icf</state>
+          <state>D:\work\workspace_EWW\fp_blackboard_bins_eww\Project\stm32f4xx_flash.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1964,61 +1967,61 @@
   <group>
     <name>inc</name>
     <group>
-      <name>measure</name>
+      <name>GNSS</name>
       <file>
-        <name>$PROJ_DIR$\..\inc\measure\l3gd20.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\inc\measure\lsm303dlhc.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\inc\measure\stm32f3_discovery.h</name>
+        <name>$PROJ_DIR$\..\inc\GNSS\binr_parse.h</name>
       </file>
     </group>
     <group>
-      <name>proto</name>
+      <name>IMU</name>
     </group>
-    <file>
-      <name>$PROJ_DIR$\..\inc\local_init.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\inc\stm32f4xx_conf.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\inc\stm32f4xx_it.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\inc\SYS_init.h</name>
-    </file>
+    <group>
+      <name>init</name>
+      <file>
+        <name>$PROJ_DIR$\..\inc\init\stm32f4xx_conf.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\inc\init\stm32f4xx_it.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\inc\init\sys_init.h</name>
+      </file>
+    </group>
+    <group>
+      <name>math</name>
+    </group>
+    <group>
+      <name>tools</name>
+    </group>
   </group>
   <group>
     <name>src</name>
     <group>
-      <name>measure</name>
+      <name>GNSS</name>
       <file>
-        <name>$PROJ_DIR$\..\src\measure\l3gd20.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\src\measure\lsm303dlhc.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\src\measure\stm32f3_discovery.c</name>
+        <name>$PROJ_DIR$\..\src\GNSS\binr_parse.c</name>
       </file>
     </group>
     <group>
-      <name>proto</name>
+      <name>IMU</name>
     </group>
-    <file>
-      <name>$PROJ_DIR$\..\src\local_init.c</name>
-    </file>
+    <group>
+      <name>init</name>
+      <file>
+        <name>$PROJ_DIR$\..\src\init\sys_init.c</name>
+      </file>
+    </group>
+    <group>
+      <name>math</name>
+    </group>
+    <group>
+      <name>tools</name>
+    </group>
     <file>
       <name>$PROJ_DIR$\..\src\main.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\stm32f4xx_it.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\SYS_init.c</name>
     </file>
   </group>
   <group>
