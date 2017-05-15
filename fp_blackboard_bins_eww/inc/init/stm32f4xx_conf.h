@@ -93,6 +93,23 @@
 #define M_PIO_RST(_base,_pins) (((GPIO_TypeDef *) _base)->BSRRH = _pins)
 #define M_PIO_Trigg(_base,_pins) (((GPIO_TypeDef *) _base)->ODR ^= _pins)
 
+
+//------------------------------
+#define		Pin_Set(PORT,PIN)		PORT->BSRRL = PIN
+#define		Pin_Rst(PORT,PIN)		PORT->BSRRH = PIN
+#define		Pin_Toggle(PORT,PIN)  	PORT->ODR ^= PIN
+//--------------------------------
+typedef unsigned long long uint64;
+typedef unsigned long uint32;
+typedef unsigned short uint16;
+typedef unsigned char uint8;
+typedef signed long long int64;
+typedef signed long int32;
+typedef signed short int16;
+typedef signed char int8;
+//--------------------------------------
+
+
 #endif /* __STM32F4xx_CONF_H */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

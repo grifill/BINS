@@ -181,7 +181,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>ENABLE_PRINT</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1974,9 +1974,18 @@
     </group>
     <group>
       <name>IMU</name>
+      <file>
+        <name>$PROJ_DIR$\..\inc\IMU\l3g4200d_driver.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\inc\IMU\lsm303dlhc_driver.h</name>
+      </file>
     </group>
     <group>
       <name>init</name>
+      <file>
+        <name>$PROJ_DIR$\..\inc\IMU\mems.h</name>
+      </file>
       <file>
         <name>$PROJ_DIR$\..\inc\init\stm32f4xx_conf.h</name>
       </file>
@@ -1992,6 +2001,9 @@
     </group>
     <group>
       <name>tools</name>
+      <file>
+        <name>$PROJ_DIR$\..\inc\tools\func_tools.h</name>
+      </file>
     </group>
   </group>
   <group>
@@ -2004,6 +2016,15 @@
     </group>
     <group>
       <name>IMU</name>
+      <file>
+        <name>$PROJ_DIR$\..\src\IMU\l3g4200d_driver.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\src\IMU\lsm303dlhc_driver.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\src\IMU\mems.c</name>
+      </file>
     </group>
     <group>
       <name>init</name>
@@ -2016,6 +2037,9 @@
     </group>
     <group>
       <name>tools</name>
+      <file>
+        <name>$PROJ_DIR$\..\src\tools\func_tools.c</name>
+      </file>
     </group>
     <file>
       <name>$PROJ_DIR$\..\src\main.c</name>

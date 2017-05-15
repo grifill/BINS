@@ -13,17 +13,19 @@
 #ifndef SYS_INIT_H_
 #define SYS_INIT_H_
 
+#include        <stdint.h>
+
 #include        "stm32f4xx_conf.h"
 #include 	"stm32f4xx.h"
-
-#include        <stdint.h>
 
 
 void clk_init();
 void led_init();
 void gps_init();
 void usart1_init();
+void console_init();
 
+void timer2_init();
 
 
 

@@ -11,17 +11,21 @@
   ******************************************************************************
   */
 #include "sys_init.h"
+#include "func_tools.h"
+
 
 // CLK 
 void clk_init()
 {
-  HSEValueSet(16000000);
   SystemCoreClockUpdate();
   for(int delay_clk = 0; delay_clk < 0xFFFF; delay_clk++);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART6, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
   
 }
 
@@ -65,7 +69,7 @@ void gps_init()
     nrst_pin.GPIO_OType = GPIO_OType_PP;
     nrst_pin.GPIO_Pin =  GPIO_Pin_8;
     nrst_pin.GPIO_Speed = GPIO_Speed_100MHz;
-    nrst_pin.GPIO_PuPd = GPIO_PuPd_DOWN;
+    nrst_pin.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_Init(GPIOA,&nrst_pin);
   GPIO_ResetBits(GPIOA,GPIO_Pin_8);
   for(int delay_nrst = 0; delay_nrst < 0xFFFF; delay_nrst++);
@@ -101,7 +105,7 @@ void gps_init()
 
 // NV08-C (GPS-NAVY) - USART1
 void usart1_init()
-{
+{  
   // USART1 - interrupt
   NVIC_InitTypeDef NVIC_InitStructure_USART_GPS;
     NVIC_InitStructure_USART_GPS.NVIC_IRQChannel = USART1_IRQn;
@@ -125,6 +129,64 @@ void usart1_init()
   USART_Cmd(USART1, ENABLE);
 }
 
+void console_init()
+{
+#if defined(PRINTF_CAN_USED)
+  GPIO_InitTypeDef usart6_pin;
+    usart6_pin.GPIO_Mode = GPIO_Mode_AF;
+    usart6_pin.GPIO_OType = GPIO_OType_PP;
+    usart6_pin.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7;
+    usart6_pin.GPIO_Speed = GPIO_Speed_50MHz;
+    usart6_pin.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_Init(GPIOC,&usart6_pin);
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_USART6);//Tx
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_USART6);//Rx
+  
+  GPIO_InitTypeDef de_pin;
+    de_pin.GPIO_Mode = GPIO_Mode_OUT;
+    de_pin.GPIO_OType = GPIO_OType_PP;
+    de_pin.GPIO_Pin =  GPIO_Pin_8;
+    de_pin.GPIO_Speed = GPIO_Speed_25MHz;
+    de_pin.GPIO_PuPd = GPIO_PuPd_DOWN;
+  GPIO_Init(GPIOC,&de_pin);
+  GPIO_ResetBits(GPIOC,GPIO_Pin_8);
+  
+  USART_InitTypeDef usart_console;
+    usart_console.USART_BaudRate = CONSOLE_SPEED;
+    usart_console.USART_WordLength = USART_WordLength_8b;
+    usart_console.USART_StopBits = USART_StopBits_1;
+    usart_console.USART_Parity = USART_Parity_No;
+    usart_console.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    usart_console.USART_Mode = USART_Mode_Tx;
+  USART_Init(USART_CONSOLE, &usart_console);
+  USART_Cmd(USART_CONSOLE, ENABLE);
+  
+  GPIO_SetBits(GPIOC, GPIO_Pin_8);
+#endif
+}
 
-
+// TIM2
+void timer2_init()
+{
+  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure2;
+    TIM_TimeBaseStructure2.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseStructure2.TIM_Period = 2000-1;//500 Hz
+    TIM_TimeBaseStructure2.TIM_Prescaler = 360-1;
+    TIM_TimeBaseStructure2.TIM_ClockDivision = 0;
+    TIM_TimeBaseStructure2.TIM_CounterMode = TIM_CounterMode_Up;
+    TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure2);
+	
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+      NVIC_InitTypeDef 	NVIC_InitStructure2;
+      NVIC_InitStructure2.NVIC_IRQChannel = TIM2_IRQn;
+      NVIC_InitStructure2.NVIC_IRQChannelPreemptionPriority = 3;
+      NVIC_InitStructure2.NVIC_IRQChannelSubPriority = 3;
+      NVIC_InitStructure2.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure2);
+    TIM_ITConfig((TIM_TypeDef *)TIM2_BASE,TIM_IT_Update, ENABLE);
+    TIM_ClearITPendingBit((TIM_TypeDef *)TIM2_BASE, TIM_IT_Update);
+    NVIC_EnableIRQ(TIM2_IRQn);
+  //------------------------------------------------------------------------
+  TIM_Cmd(TIM2, ENABLE);
+}
 
