@@ -8,6 +8,7 @@
 #include "lsm303dlhc_driver.h"
 #include "l3g4200d_driver.h"
 #include "func_tools.h"
+#include "usart_tools.h"
 
 /* External variables --------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -47,7 +48,6 @@ void UsageFault_Handler(void)
 //---------------------------------------------------------------------------
 //				GPS 1-pps
 //---------------------------------------------------------------------------
-/*
 void EXTI0_IRQHandler(void)
 {
   switch(EXTI_GetITStatus(EXTI_Line0))
@@ -60,8 +60,49 @@ void EXTI0_IRQHandler(void)
       break;
   }
   EXTI_ClearITPendingBit(EXTI_Line0);
-}*/
+}
+//---------------------------------------------------------------------------
+//				GPS USART1
+//---------------------------------------------------------------------------
+void USART1_IRQHandler(void)
+{
+  if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+  {
+    char ch;
+    ch = (USART1->DR) & 0xFF;
+    USART_Read_Byte(ch);
+    USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+  }
+}
 
+
+char PORT_ask[4]={0x10,0x0B,0x10,0x03};                                         // Запрос параметров порта
+
+
+void TIM2_IRQHandler(void)
+{
+  switch (TIM_GetITStatus(TIM2, TIM_IT_Update))
+  {
+    case 0:
+      break;
+    default:
+        USART_Send_Buf((uint8_t*)PORT_ask,4);
+  }
+  TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 extern uint8_t response;
 extern L3GAxesRaw_t data_l3g;
 extern AccAxesRaw_t data_a;
@@ -70,8 +111,6 @@ extern MagAxesRaw_t data_m;
 int32_t xg=0;
 int32_t yg=0;
 int32_t zg=0;
-
-
 void TIM2_IRQHandler(void)
 {
   switch (TIM_GetITStatus(TIM2, TIM_IT_Update))
@@ -87,4 +126,4 @@ void TIM2_IRQHandler(void)
       GPIOB->ODR^=GPIO_Pin_14;
   }
   TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-}
+}*/

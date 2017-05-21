@@ -2179,6 +2179,9 @@
       <file>
         <name>$PROJ_DIR$\..\inc\tools\func_tools.h</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\..\inc\tools\usart_tools.h</name>
+      </file>
     </group>
   </group>
   <group>
@@ -2214,6 +2217,9 @@
       <name>tools</name>
       <file>
         <name>$PROJ_DIR$\..\src\tools\func_tools.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\src\tools\usart_tools.c</name>
       </file>
     </group>
     <file>

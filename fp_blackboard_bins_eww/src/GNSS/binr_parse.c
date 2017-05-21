@@ -4,14 +4,15 @@
  *  Created on: 15 янв. 2015 г.
  *      Author: grifill
  */
-#include 	"binr_parse.h"
+
+#include "binr_parse.h"
 
 #ifndef HUGE_VAL
 # define HUGE_VAL HUGE
 #endif /*HUGE_VAL*/
 
 # define FloatToUnsigned(f)      ((unsigned long)(((long)(f - 2147483648.0)) + 2147483647L) + 1)
-# define UnsignedToFloat(u_p)         (((double)((long)(u_p - 2147483647L - 1))) + 2147483648.0)
+# define UnsignedToFloat(u_p)    (((double)((long)(u_p - 2147483647L - 1))) + 2147483648.0)
 /***************************************************************************************************
  * Convert FP80 to unsigned char (IEEE-754) in little endian
  *
@@ -143,3 +144,94 @@ double  uchar_to_FP80_lendian(unsigned char* bytes)
   return (end.week_number - beginning.week_number)*7*24*3600 + \
 		  end.seconds_per_week - beginning.seconds_per_week;
  }
+
+//========================== PROTOCOL ==========================================
+struct NV08C_InitTypeDef nv08c; 
+extern struct tUSARTcontext usart_pool;
+extern uint8_t ch;
+uint8_t data_state_t = 0;
+uint8_t dle_t = 0;
+uint8_t ID_t = 0;
+
+
+/**
+\brief Функция сброс настроек для модуля NV08C 
+\param nv08c_res      указатель на структуру с параметрами модуля
+*/
+__weak void NV08C_Soft_Reset(struct NV08C_InitTypeDef* nv08c_parse)
+{
+  memset(nv08c_parse->_buf_rx_,0,PROTO_BUF_SIZE);
+  memset(nv08c_parse->_buf_tx_,0,PROTO_BUF_SIZE);
+  nv08c_parse->_tx_cnt_ = 0;
+  nv08c_parse->_rx_cnt_ = 0;
+
+  // Модуль
+  Add_USART(&usart_pool);
+  
+  // Начальное состояние флагов
+  data_state_t = 0;
+  dle_t = 0;
+  ID_t = 0;
+}
+/**
+\brief Функция осуществляет разбор BINR команд от модуля NV08C-GSM.
+Выставляет флаг <BINR_parse_ok> когда команда принята и разобрана 
+и возвращает флаг <BINR_parse_nrdy> когда команда еще не разобрана
+*/
+__weak uint16_t BINR_Parse(struct NV08C_InitTypeDef* nv08c_parse)
+{
+  if (GetByte_t(&ch) == 0)
+	return BINR_parse_nrdy;
+  if ((ch==BINR_DLE)&&(data_state_t==DATA_NEED)&&(dle_t==DLE_NEED))
+  {
+    dle_t = DLE_ONE;
+    return BINR_parse_nrdy;
+  }
+  if ((data_state_t==DATA_NEED)&&(dle_t==DLE_ONE))
+  {
+    ID_t = ch;
+    dle_t = DLE_TWO;
+    memset(nv08c_parse->_buf_rx_,0,PROTO_BUF_SIZE);
+    memset(nv08c_parse->_buf_tx_,0,PROTO_BUF_SIZE);
+    nv08c_parse->_tx_cnt_ = 0;
+    nv08c_parse->_rx_cnt_ = 0;
+    return BINR_parse_nrdy;
+  }
+  if ((data_state_t==DATA_NEED)&&(dle_t==DLE_TWO)) // Нет контроля, что ID - получен
+  {
+    switch(ID_t)
+    {
+    //---------------------------------------------------------
+    case ID_PORT: // "Параметры порта"
+      nv08c_parse->_buf_rx_[nv08c_parse->_rx_cnt_]=(char)ch;
+      nv08c_parse->_rx_cnt_++;
+      if (nv08c_parse->_rx_cnt_ >= 6) // 6-байт
+      {
+        nv08c_parse->_buf_rx_[(nv08c_parse->_rx_cnt_)+1]=0;
+        // Далее обработка и в структуру --------------->>>
+        PRINT("%s\n",nv08c_parse->_buf_rx_);
+        //-----------------------------------------------//
+        data_state_t=DATA_READY;
+        dle_t=DLE_NEED;
+        return BINR_parse_ok;
+      }
+      return BINR_parse_nrdy;
+    //---------------------------------------------------------
+    default:
+      return BINR_parse_nrdy;
+    }
+  }
+  return BINR_parse_nrdy;
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -13,6 +13,10 @@
 
 #include "sys_init.h"
 #include "func_tools.h"
+#include "usart_tools.h"
+
+#include "binr_parse.h"
+
 #include "mems.h"
 #include "lsm303dlhc_driver.h"
 #include "l3g4200d_driver.h"
@@ -24,6 +28,8 @@ L3GAxesRaw_t data_l3g;
 AccAxesRaw_t data_a;
 MagAxesRaw_t data_m;
 
+extern struct NV08C_InitTypeDef nv08c; 
+
 int main()
 {
   clk_init();
@@ -31,21 +37,23 @@ int main()
   //RCC_GetClocksFreq(&RCC_ClocksStatus);
   
   led_init();
-  //gps_init();
+  gps_init();
   
   console_init();
   usart1_init();
+  
+  NV08C_Soft_Reset(&nv08c);
   PRINT(">>> Program Start (%s %s)\n",__DATE__,__TIME__);
   
  // I2C_MEMS_Init();
-  SPI_Mems_Init();
+ // SPI_Mems_Init();
 
-  gyro_init(L3G4200D_ODR_800Hz_BW_110, L3G4200D_FULLSCALE_250);
+ // gyro_init(L3G4200D_ODR_800Hz_BW_110, L3G4200D_FULLSCALE_250);
   
   timer2_init();
   while(1)
   {
-   
+   BINR_Parse(&nv08c);
   }
 }
 

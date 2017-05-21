@@ -170,8 +170,8 @@ void timer2_init()
 {
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure2;
     TIM_TimeBaseStructure2.TIM_RepetitionCounter = 0;
-    TIM_TimeBaseStructure2.TIM_Period = 2000-1;//500 Hz
-    TIM_TimeBaseStructure2.TIM_Prescaler = 360-1;
+    TIM_TimeBaseStructure2.TIM_Period = 20000-1;//500 Hz
+    TIM_TimeBaseStructure2.TIM_Prescaler = 3600-1;
     TIM_TimeBaseStructure2.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure2.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure2);
